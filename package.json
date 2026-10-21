@@ -1,0 +1,24 @@
+{
+  "name": "preppilot-workspace",
+  "version": "1.0.0",
+  "description": "PrepPilot - Full-Stack AI Resume Analyzer and Mock Interview Coach",
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "seed": "npm --prefix server run seed",
+    "test": "npm --prefix server test",
+    "build:client": "npm --prefix client run build"
+  },
+  "keywords": [
+    "ai",
+    "resume-analyzer",
+    "ats-score",
+    "mock-interview",
+    "gemini-ai",
+    "react",
+    "nodejs",
+    "mongodb"
+  ],
+  "author": "College Mini Project",
+  "license": "ISC"
+}

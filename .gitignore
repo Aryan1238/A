@@ -1,0 +1,28 @@
+# Node dependencies
+node_modules/
+package-lock.json
+
+# Environment variables (keep example files committed)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Build artifacts
+dist/
+dist-ssr/
+build/
+coverage/
+
+# Local databases
+server/data/
+server/data/db/
+*.log
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
