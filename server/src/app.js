@@ -20,17 +20,57 @@ const dashboardRoutes = require('./routes/dashboard.routes');
 
 const app = express();
 
+// Trust first hop proxy (essential for rate limiting and accurate client IP behind Render)
+app.set('trust proxy', 1);
+
 // 1. Cross-Origin Resource Sharing (CORS)
-const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+// Extract origin only (protocol + host + port, no path) from CLIENT_URL
+const getAllowedOrigins = () => {
+  const origins = new Set([
+    'http://localhost:5173',
+    'http://localhost:3000'
+  ]);
+
+  if (process.env.CLIENT_URL) {
+    process.env.CLIENT_URL.split(',').forEach((rawUrl) => {
+      const trimmed = rawUrl.trim();
+      if (!trimmed) return;
+      try {
+        origins.add(new URL(trimmed).origin);
+      } catch {
+        origins.add(trimmed.replace(/\/+$/, ''));
+      }
+    });
+  }
+
+  return origins;
+};
+
+const allowedOrigins = getAllowedOrigins();
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, postman) or matching origin
-      if (!origin || origin === allowedOrigin || origin.startsWith('http://localhost:')) {
-        callback(null, true);
-      } else {
-        callback(null, true); // Permissive in dev for convenience
+      // Allow requests with no origin (mobile apps, curl, server-to-server)
+      if (!origin) {
+        return callback(null, true);
       }
+
+      // Check if origin matches CLIENT_URL origin or localhost
+      if (
+        allowedOrigins.has(origin) ||
+        origin.startsWith('http://localhost:') ||
+        origin.startsWith('http://127.0.0.1:')
+      ) {
+        return callback(null, true);
+      }
+
+      // In development, be permissive if not in production
+      if (process.env.NODE_ENV !== 'production') {
+        return callback(null, true);
+      }
+
+      return callback(null, false);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

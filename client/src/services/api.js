@@ -6,7 +6,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5001/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   timeout: 45000 // 45s timeout for AI generation
 });
 
@@ -28,10 +28,8 @@ api.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       // If unauthorized and not already on login/register, clear token
-      if (
-        !window.location.pathname.includes('/login') &&
-        !window.location.pathname.includes('/register')
-      ) {
+      const currentUrl = window.location.href;
+      if (!currentUrl.includes('/login') && !currentUrl.includes('/register')) {
         localStorage.removeItem('preppilot_token');
         localStorage.removeItem('preppilot_user');
       }
