@@ -2,6 +2,24 @@
 ### AI Resume Analyzer & Mock Interview Coach
 > **College Mini Project** &bull; Full-Stack MERN Application with Google Gemini AI Integration
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-22c55e?style=for-the-badge&logo=github)](https://aryan1238.github.io/A/)
+[![Backend API](https://img.shields.io/badge/Backend%20API-Render-46e3b7?style=for-the-badge&logo=render)](https://preppilot-api-dk3o.onrender.com)
+[![Database](https://img.shields.io/badge/Database-MongoDB%20Atlas-47A248?style=for-the-badge&logo=mongodb)](https://cloud.mongodb.com/)
+[![AI Engine](https://img.shields.io/badge/AI%20Engine-Gemini%201.5%20Flash-4285F4?style=for-the-badge&logo=google)](https://aistudio.google.com/)
+[![Presentation Slides](https://img.shields.io/badge/Viva%20Slides-Red%2FBlack%20Theme-ef4444?style=for-the-badge&logo=slideshare)](docs/slides.html)
+
+---
+
+## 🌐 Live Deployments
+
+| Component | Platform | Live URL | Status |
+| :--- | :--- | :--- | :--- |
+| **Frontend Web App** | GitHub Pages | [https://aryan1238.github.io/A/](https://aryan1238.github.io/A/) | ✅ Active |
+| **Backend REST API** | Render | [https://preppilot-api-dk3o.onrender.com](https://preppilot-api-dk3o.onrender.com) | ✅ Active |
+| **API Health Check** | Render | [https://preppilot-api-dk3o.onrender.com/api/health](https://preppilot-api-dk3o.onrender.com/api/health) | 🩺 Healthy |
+| **Source Code** | GitHub | [https://github.com/Aryan1238/A](https://github.com/Aryan1238/A) | 📦 Public |
+| **Presentation Deck** | Local / Browser | [`docs/slides.html`](docs/slides.html) | 🎬 10-Min Deck |
+
 ---
 
 ## 1. Project Overview

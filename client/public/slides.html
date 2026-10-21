@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrepPilot — 10-Minute Project Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #070709;
+      color: #f1f5f9;
+      overflow: hidden;
+      user-select: none;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    
+    /* Radial red ambient lighting */
+    .bg-mesh {
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(220, 38, 38, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(185, 28, 28, 0.18) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(15, 15, 20, 0.95) 0%, #070709 100%);
+    }
+
+    .glass-card {
+      background: rgba(18, 18, 22, 0.75);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(239, 68, 68, 0.22);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(220, 38, 38, 0.1);
+    }
+    
+    .glass-card-hover:hover {
+      border-color: rgba(239, 68, 68, 0.5);
+      box-shadow: 0 10px 35px -5px rgba(220, 38, 38, 0.25);
+    }
+
+    .text-glow {
+      text-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
+    }
+
+    .slide {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.35s ease-in-out, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: scale(0.98);
+    }
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Print styling for PDF export */
+    @media print {
+      body { overflow: visible !important; background: #070709 !important; }
+      .no-print { display: none !important; }
+      .slide {
+        display: flex !important;
+        opacity: 1 !important;
+        transform: none !important;
+        page-break-after: always !important;
+        height: 100vh !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-mesh min-h-screen w-screen flex flex-col justify-between">
+
+  <!-- TOP HEADER / CONTROLS -->
+  <header class="no-print h-16 border-b border-red-950/60 bg-black/40 backdrop-blur-md px-6 flex items-center justify-between z-50">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-red-600 to-rose-500 flex items-center justify-center font-black text-white shadow-lg shadow-red-600/40">
+        P
+      </div>
+      <div>
+        <span class="font-extrabold text-base tracking-tight text-white">PrepPilot</span>
+        <span class="text-xs px-2 py-0.5 ml-2 rounded-full bg-red-950/80 border border-red-800/50 text-red-400 font-semibold">Viva Presentation</span>
+      </div>
+    </div>
+
+    <!-- Center Progress -->
+    <div class="flex items-center space-x-3">
+      <span id="slideIndicator" class="mono text-xs font-semibold text-slate-400">01 / 10</span>
+      <div class="w-48 h-2 rounded-full bg-slate-900 border border-red-950 overflow-hidden">
+        <div id="progressBar" class="h-full bg-gradient-to-r from-red-700 via-red-500 to-rose-400 w-[10%] transition-all duration-300"></div>
+      </div>
+    </div>
+
+    <!-- Right Controls: Timer & Buttons -->
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2 bg-red-950/40 border border-red-900/60 px-3 py-1 rounded-lg">
+        <span class="text-xs text-red-400 font-semibold uppercase tracking-wider">Timer:</span>
+        <span id="timerDisplay" class="mono text-sm font-bold text-white">10:00</span>
+        <button id="timerToggle" onclick="toggleTimer()" class="text-xs text-slate-400 hover:text-white px-1 font-bold">▶</button>
+        <button onclick="resetTimer()" class="text-xs text-slate-400 hover:text-white px-1">↺</button>
+      </div>
+
+      <button onclick="toggleNotes()" class="px-3 py-1 text-xs font-semibold rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:border-red-500 transition-all">
+        Notes [N]
+      </button>
+
+      <button onclick="toggleFullScreen()" class="px-3 py-1 text-xs font-semibold rounded-lg bg-red-600/80 hover:bg-red-600 text-white shadow-md shadow-red-600/30 transition-all">
+        Fullscreen [F]
+      </button>
+    </div>
+  </header>
+
+  <!-- SLIDES CONTAINER -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-6 py-4 flex items-center justify-center relative overflow-hidden">
+
+    <!-- SLIDE 1: TITLE SLIDE -->
+    <section class="slide active flex-col justify-center items-center text-center w-full h-full max-w-5xl" data-title="Title & Overview">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-950/80 border border-red-600/40 text-red-400 text-xs font-bold uppercase tracking-widest mb-6 shadow-lg shadow-red-900/20">
+        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+        Final Year / College Mini Project (2026)
+      </div>
+
+      <h1 class="text-5xl sm:text-7xl font-black tracking-tight text-white leading-tight mb-4">
+        Prep<span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-rose-500 to-red-400 text-glow">Pilot</span>
+      </h1>
+      
+      <p class="text-xl sm:text-2xl font-semibold text-slate-300 max-w-3xl mb-8">
+        AI-Powered Resume ATS Analyzer & Interactive Mock Interview Coach
+      </p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-4xl text-left mb-10">
+        <div class="glass-card p-4 rounded-2xl">
+          <div class="text-[10px] uppercase font-bold text-red-400 tracking-wider">Frontend</div>
+          <div class="text-sm font-extrabold text-white">React 18 + Vite</div>
+          <div class="text-xs text-slate-400">Tailwind + HashRouter</div>
+        </div>
+        <div class="glass-card p-4 rounded-2xl">
+          <div class="text-[10px] uppercase font-bold text-red-400 tracking-wider">Backend</div>
+          <div class="text-sm font-extrabold text-white">Node.js + Express</div>
+          <div class="text-xs text-slate-400">RESTful MVC Architecture</div>
+        </div>
+        <div class="glass-card p-4 rounded-2xl">
+          <div class="text-[10px] uppercase font-bold text-red-400 tracking-wider">Database</div>
+          <div class="text-sm font-extrabold text-white">MongoDB Atlas</div>
+          <div class="text-xs text-slate-400">Mongoose ODM + Indexes</div>
+        </div>
+        <div class="glass-card p-4 rounded-2xl">
+          <div class="text-[10px] uppercase font-bold text-red-400 tracking-wider">AI Engine</div>
+          <div class="text-sm font-extrabold text-white">Google Gemini 1.5</div>
+          <div class="text-xs text-slate-400">RFC8259 Structured JSON</div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-6 text-sm text-slate-400">
+        <div>Presented by: <span class="font-bold text-white">Aryan Mishra</span></div>
+        <div class="w-1 h-1 rounded-full bg-red-500"></div>
+        <div>Deployment: <span class="text-red-400 font-mono">GitHub Pages + Render</span></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: PROBLEM STATEMENT -->
+    <section class="slide flex-col justify-center w-full h-full max-w-5xl" data-title="Problem Statement">
+      <div class="text-xs font-bold uppercase tracking-wider text-red-500 mb-2">01 / The Placement Challenge</div>
+      <h2 class="text-4xl font-extrabold text-white tracking-tight mb-8">
+        Why University Placement Candidates Struggle
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="glass-card p-6 rounded-2xl border-l-4 border-l-red-600">
+          <div class="w-10 h-10 rounded-xl bg-red-950/80 text-red-400 flex items-center justify-center font-black text-lg mb-4">75%</div>
+          <h3 class="text-base font-bold text-white mb-2">The ATS "Black Hole"</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Over 75% of student resumes are eliminated by Automated Applicant Tracking Systems (ATS) due to missing keywords, poor formatting, or role misalignment before human review.
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl border-l-4 border-l-rose-600">
+          <div class="w-10 h-10 rounded-xl bg-red-950/80 text-rose-400 flex items-center justify-center font-black text-lg mb-4">0x</div>
+          <h3 class="text-base font-bold text-white mb-2">Zero Realistic Viva Practice</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Students face technical interview anxiety because traditional placement training provides theoretical lecture slides instead of interactive, multi-turn technical interview rounds.
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl border-l-4 border-l-red-500">
+          <div class="w-10 h-10 rounded-xl bg-red-950/80 text-red-300 flex items-center justify-center font-black text-lg mb-4">$$$</div>
+          <h3 class="text-base font-bold text-white mb-2">Commercial Gatekeeping</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Existing mock interview platforms (LeetCode Premium, Interviewing.io) cost $30–$150/month, making quality AI assessment inaccessible to ordinary college candidates.
+          </p>
+        </div>
+      </div>
+
+      <div class="glass-card p-4 rounded-xl border border-red-900/40 bg-red-950/20 text-xs text-slate-300 flex items-center gap-3">
+        <span class="text-lg">🎯</span>
+        <span><strong>The Goal:</strong> Provide an accessible, free, production-grade AI platform that diagnoses resumes and simulates authentic technical interviews with instant, personalized feedback.</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: PROPOSED SOLUTION -->
+    <section class="slide flex-col justify-center w-full h-full max-w-5xl" data-title="Proposed Solution">
+      <div class="text-xs font-bold uppercase tracking-wider text-red-500 mb-2">02 / The PrepPilot Solution</div>
+      <h2 class="text-4xl font-extrabold text-white tracking-tight mb-8">
+        Dual-Core AI Placement Preparation Platform
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-red-600/10 rounded-full blur-2xl"></div>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-red-900/60 border border-red-700/50 flex items-center justify-center text-red-400 font-bold text-lg">01</div>
+            <div>
+              <h3 class="text-lg font-bold text-white">AI Resume ATS Auditor</h3>
+              <span class="text-[10px] text-red-400 font-semibold uppercase">Instant PDF Analysis</span>
+            </div>
+          </div>
+          <ul class="space-y-2.5 text-xs text-slate-300">
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 font-bold">✓</span>
+              <span><strong>In-Memory PDF Parsing:</strong> Extracts raw text directly from buffers with zero disk storage leaks.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 font-bold">✓</span>
+              <span><strong>ATS Match Score (0–100):</strong> Evaluates keyword overlap, technical competency, and relevance against target JD.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 font-bold">✓</span>
+              <span><strong>Actionable Critique:</strong> Delivers matched/missing keywords, section feedback, and 5 concrete improvement steps.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-rose-600/10 rounded-full blur-2xl"></div>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-rose-900/60 border border-rose-700/50 flex items-center justify-center text-rose-400 font-bold text-lg">02</div>
+            <div>
+              <h3 class="text-lg font-bold text-white">AI Mock Interview Coach</h3>
+              <span class="text-[10px] text-rose-400 font-semibold uppercase">5-Question Technical Rounds</span>
+            </div>
+          </div>
+          <ul class="space-y-2.5 text-xs text-slate-300">
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 font-bold">✓</span>
+              <span><strong>Role & Difficulty Tiers:</strong> Frontend, Backend, Full Stack, Data Science across Beginner, Intermediate, and Advanced.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 font-bold">✓</span>
+              <span><strong>Per-Answer AI Grading:</strong> Evaluates answers out of 10 with constructive strengths & weaknesses critique.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500 font-bold">✓</span>
+              <span><strong>Ideal Model Answers:</strong> Shows industry-standard model answers for instant learning and reinforcement.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="text-center text-xs text-slate-400">
+        Both engines persist analyses to MongoDB Atlas and compute real-time visual progress on user dashboards.
+      </div>
+    </section>
+
+    <!-- SLIDE 4: SYSTEM ARCHITECTURE -->
+    <section class="slide flex-col justify-center w-full h-full max-w-5xl" data-title="System Architecture">
+      <div class="text-xs font-bold uppercase tracking-wider text-red-500 mb-2">03 / Engineering Design</div>
+      <h2 class="text-4xl font-extrabold text-white tracking-tight mb-6">
+        Full-Stack MVC System Architecture
+      </h2>
+
+      <!-- Visual Pipeline Diagram -->
+      <div class="glass-card p-6 rounded-2xl mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center relative">
+          
+          <div class="p-4 rounded-xl bg-black/60 border border-slate-800">
+            <div class="text-xs font-bold text-red-400 uppercase tracking-wider mb-1">Presentation Layer</div>
+            <div class="text-sm font-extrabold text-white mb-1">React 18 + Vite SPA</div>
+            <div class="text-[11px] text-slate-400">GitHub Pages CDN</div>
+            <div class="mt-2 text-[10px] px-2 py-0.5 rounded bg-red-950 text-red-300 font-mono">HashRouter + Axios</div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-black/60 border border-slate-800">
+            <div class="text-xs font-bold text-red-400 uppercase tracking-wider mb-1">Controller & Auth</div>
+            <div class="text-sm font-extrabold text-white mb-1">Express.js REST API</div>
+            <div class="text-[11px] text-slate-400">Render Cloud Host</div>
+            <div class="mt-2 text-[10px] px-2 py-0.5 rounded bg-red-950 text-red-300 font-mono">JWT + bcrypt + CORS</div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-black/60 border border-slate-800">
+            <div class="text-xs font-bold text-red-400 uppercase tracking-wider mb-1">Persistence Layer</div>
+            <div class="text-sm font-extrabold text-white mb-1">MongoDB Atlas Cluster</div>
+            <div class="text-[11px] text-slate-400">Cloud Replica Set</div>
+            <div class="mt-2 text-[10px] px-2 py-0.5 rounded bg-red-950 text-red-300 font-mono">Mongoose ODM + Indexes</div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-black/60 border border-slate-800">
+            <div class="text-xs font-bold text-red-400 uppercase tracking-wider mb-1">AI Intelligence</div>
+            <div class="text-sm font-extrabold text-white mb-1">Google Gemini API</div>
+            <div class="text-[11px] text-slate-400">gemini-1.5-flash</div>
+            <div class="mt-2 text-[10px] px-2 py-0.5 rounded bg-red-950 text-red-300 font-mono">Strict JSON Outputs</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4 text-xs text-slate-300">
+        <div class="p-3 rounded-xl bg-red-950/20 border border-red-900/30">
+          <strong class="text-white block mb-0.5">🔒 Stateless Security:</strong>
+          JWT Bearer tokens stored in localStorage, attached via Axios request interceptors.
+        </div>
+        <div class="p-3 rounded-xl bg-red-950/20 border border-red-900/30">
+          <strong class="text-white block mb-0.5">🌐 CORS & Proxy Isolation:</strong>
+          Trust proxy enabled behind Render; origin strictly whitelisted to GitHub Pages.
+        </div>
+        <div class="p-3 rounded-xl bg-red-950/20 border border-red-900/30">
+          <strong class="text-white block mb-0.5">⚡ Resilient Reconnect:</strong>
+          Automatic background MongoDB reconnect loop handles transient cloud cold starts.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: FEATURE 1 (RESUME ANALYZER) -->
+    <section class="slide flex-col justify-center w-full h-full max-w-5xl" data-title="Resume Analyzer Feature">
+      <div class="text-xs font-bold uppercase tracking-wider text-red-500 mb-2">04 / Deep Dive — Feature 1</div>
+      <h2 class="text-4xl font-extrabold text-white tracking-tight mb-6">
+        AI Resume ATS Analyzer & PDF Exporter
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="glass-card p-6 rounded-2xl space-y-4">
+          <h3 class="text-sm font-bold uppercase text-red-400 tracking-wider">Analysis Pipeline</h3>
+          
+          <div class="space-y-3 text-xs text-slate-300">
+            <div class="p-3 rounded-xl bg-black/40 border border-slate-800">
+              <span class="font-bold text-white">1. In-Memory Upload:</span> Multer intercepts candidate PDF in memory buffer (5MB limit, PDF-only mime filter).
+            </div>
+            <div class="p-3 rounded-xl bg-black/40 border border-slate-800">
+              <span class="font-bold text-white">2. Text Extraction:</span> `pdf-parse` extracts clean text; sanitizes non-ASCII characters & line breaks.
+            </div>
+            <div class="p-3 rounded-xl bg-black/40 border border-slate-800">
+              <span class="font-bold text-white">3. Gemini Evaluation:</span> Sends structured prompt comparing resume text vs. job description.
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl space-y-3">
+          <h3 class="text-sm font-bold uppercase text-red-400 tracking-wider">Generated Output Schema</h3>
+
+          <div class="space-y-2 text-xs">
+            <div class="flex items-center justify-between p-2 rounded-lg bg-red-950/30 border border-red-900/40">
+              <span class="text-slate-300">ATS Match Score</span>
+              <span class="font-mono font-bold text-red-400">0 – 100% Score</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-slate-800">
+              <span class="text-slate-300">Keyword Gap Matrix</span>
+              <span class="font-mono text-emerald-400">Matched</span> / <span class="font-mono text-rose-400">Missing</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-slate-800">
+              <span class="text-slate-300">Section Feedback</span>
+              <span class="text-slate-400">Summary, Skills, Experience, Education</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-slate-800">
+              <span class="text-slate-300">Improvement Steps</span>
+              <span class="text-slate-400">5 Concrete Actionable Items</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-red-950/30 border border-red-900/40">
+              <span class="text-slate-300">Report Export</span>
+              <span class="font-bold text-white">1-Click PDF Generation (`html2pdf`)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 rounded-xl bg-black/60 border border-slate-800 text-xs text-slate-400 flex items-center justify-between">
+        <span>💡 <strong>Viva Highlight:</strong> Gemini prompt enforces strict RFC8259 JSON output with custom parsing fallback logic.</span>
+        <span class="mono text-red-400 text-[11px]">POST /api/analysis/upload</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: FEATURE 2 (MOCK INTERVIEW) -->
+    <section class="slide flex-col justify-center w-full h-full max-w-5xl" data-title="Mock Interview Feature">
+      <div class="text-xs font-bold uppercase tracking-wider text-red-500 mb-2">05 / Deep Dive — Feature 2</div>
+      <h2 class="text-4xl font-extrabold text-white tracking-tight mb-6">
+        Interactive AI Mock Interview Simulator
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="glass-card p-5 rounded-2xl">
+          <div class="text-xs font-bold text-red-400 uppercase tracking-wider mb-2">Step 1: Configuration</div>
+          <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            Candidate selects target technical role and difficulty tier:
+          </p>
+          <ul class="text-[11px] text-slate-400 space-y-1 list-disc list-inside">
+            <li>Frontend Developer</li>
+            <li>Backend Engineer</li>
+            <li>Full Stack MERN</li>
+            <li>Data Scientist</li>
+            <li>Beginner / Intermediate / Advanced</li>
+          </ul>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl">
+          <div class="text-xs font-bold text-rose-400 uppercase tracking-wider mb-2">Step 2: Dynamic Q&A</div>
+          <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            AI generates 5 targeted technical questions sequentially:
+          </p>
+          <ul class="text-[11px] text-slate-400 space-y-1 list-disc list-inside">
+            <li>Theory + Problem Solving</li>
+            <li>Timed answer input area</li>
+            <li>Stateful session tracking</li>
+            <li>Real-time question progression</li>
+          </ul>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl">
+          <div class="text-xs font-bold text-red-400 uppercase tracking-wider mb-2">Step 3: Instant Evaluation</div>
+          <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            Each submitted answer receives instant, deep analysis:
+          </p>
+          <ul class="text-[11px] text-slate-400 space-y-1 list-disc list-inside">
+            <li>Numerical score (/10)</li>
+            <li>Key strengths identified</li>
+            <li>Areas of improvement</li>
+            <li>Ideal model answer outline</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="glass-card p-4 rounded-xl flex items-center justify-between text-xs">
+        <div class="text-slate-300">
+          <strong>Outcome:</strong> Students experience high-pressure viva conditions and understand exactly how to structure technical answers.
+        </div>
+        <div class="mono text-red-400 text-[11px] font-semibold">
+          POST /api/interview/:id/answer
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: DATABASE & SECURITY -->
+    <section class="slide flex-col justify-center w-full h-full max-w-5xl" data-title="Database & Security">
+      <div class="text-xs font-bold uppercase tracking-wider text-red-500 mb-2">06 / Security & Data Integrity</div>
+      <h2 class="text-4xl font-extrabold text-white tracking-tight mb-6">
+        Database Schemas & Production Security
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="glass-card p-5 rounded-2xl">
+          <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+            <span class="text-red-500">🗄️</span> MongoDB Schemas & Relations
+          </h3>
+          <div class="space-y-2 text-xs text-slate-300">
+            <div class="p-2.5 rounded-lg bg-black/40 border border-slate-800">
+              <span class="font-mono text-red-400 font-bold">User</span>: name, email (unique index), passwordHash (bcrypt), timestamps.
+            </div>
+            <div class="p-2.5 rounded-lg bg-black/40 border border-slate-800">
+              <span class="font-mono text-red-400 font-bold">Analysis</span>: user (ObjectId ref), atsScore, matchedKeywords, missingKeywords, suggestions.
+            </div>
+            <div class="p-2.5 rounded-lg bg-black/40 border border-slate-800">
+              <span class="font-mono text-red-400 font-bold">Interview</span>: user (ObjectId ref), role, difficulty, questions[], averageScore.
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl">
+          <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+            <span class="text-red-500">🛡️</span> Security & Defensive Measures
+          </h3>
+          <div class="space-y-2 text-xs text-slate-300">
+            <div class="p-2.5 rounded-lg bg-black/40 border border-slate-800">
+              <span class="font-bold text-white">Password Hashing:</span> `bcryptjs` pre-save hook with 10 salt rounds. Plaintext never saved.
+            </div>
+            <div class="p-2.5 rounded-lg bg-black/40 border border-slate-800">
+              <span class="font-bold text-white">JWT Verification:</span> Strict Bearer token authentication middleware guards private routes.
+            </div>
+            <div class="p-2.5 rounded-lg bg-black/40 border border-slate-800">
+              <span class="font-bold text-white">Rate Limiting:</span> `express-rate-limit` prevents API brute-forcing and Gemini cost spikes.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 rounded-xl bg-red-950/20 border border-red-900/40 text-xs text-slate-300">
+        🔐 <strong>Secret Isolation:</strong> All sensitive credentials (`MONGODB_URI`, `JWT_SECRET`, `GEMINI_API_KEY`) managed via environment variables and never exposed to the client.
+      </div>
+    </section>
+
+    <!-- SLIDE 8: DEPLOYMENT & TESTING -->
+    <section class="slide flex-col justify-center w-full h-full max-w-5xl" data-title="Deployment & Testing">
+      <div class="text-xs font-bold uppercase tracking-wider text-red-500 mb-2">07 / Verification & DevOps</div>
+      <h2 class="text-4xl font-extrabold text-white tracking-tight mb-6">
+        Live Cloud Deployment & Automated Testing
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="glass-card p-5 rounded-2xl space-y-3">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <span class="text-red-500">🧪</span> Automated Test Suite (Jest + Supertest)
+          </h3>
+          <div class="p-3 rounded-xl bg-black/50 border border-slate-800 space-y-1.5 font-mono text-[11px]">
+            <div class="text-emerald-400">PASS tests/auth.test.js (5 tests passed)</div>
+            <div class="text-emerald-400">PASS tests/analysis.test.js (6 tests passed)</div>
+            <div class="text-slate-400 pt-1 border-t border-slate-800">
+              Test Suites: <strong class="text-white">2 passed</strong>, 2 total<br>
+              Tests: <strong class="text-emerald-400">11 passed</strong>, 11 total
+            </div>
+          </div>
+          <p class="text-xs text-slate-400">
+            Automated test suite mocks Gemini service to validate end-to-end user flows without consuming API quotas.
+          </p>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl space-y-3">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <span class="text-red-500">☁️</span> Zero-Cost Production Hosting
+          </h3>
+          <div class="space-y-2 text-xs">
+            <div class="p-2.5 rounded-lg bg-black/40 border border-slate-800 flex justify-between items-center">
+              <div>
+                <div class="font-bold text-white">Frontend Web App</div>
+                <div class="text-[10px] text-slate-400">GitHub Pages CDN (Automated Actions CI/CD)</div>
+              </div>
+              <a href="https://aryan1238.github.io/A/" target="_blank" class="px-2.5 py-1 rounded bg-red-950 text-red-400 hover:text-white border border-red-800 text-[11px] font-bold">Live Link ↗</a>
+            </div>
+
+            <div class="p-2.5 rounded-lg bg-black/40 border border-slate-800 flex justify-between items-center">
+              <div>
+                <div class="font-bold text-white">Backend REST API</div>
+                <div class="text-[10px] text-slate-400">Render Node.js Cloud Web Service</div>
+              </div>
+              <a href="https://preppilot-api-dk3o.onrender.com/api/health" target="_blank" class="px-2.5 py-1 rounded bg-red-950 text-red-400 hover:text-white border border-red-800 text-[11px] font-bold">Health ↗</a>
+            </div>
+
+            <div class="p-2.5 rounded-lg bg-black/40 border border-slate-800 flex justify-between items-center">
+              <div>
+                <div class="font-bold text-white">Database Cluster</div>
+                <div class="text-[10px] text-slate-400">MongoDB Atlas Cloud Replica Set</div>
+              </div>
+              <span class="text-emerald-400 font-bold text-[11px]">Connected</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card p-3 rounded-xl text-xs text-slate-300 flex items-center justify-between">
+        <span>🚀 <strong>CI/CD:</strong> GitHub Actions strictly separates <code>build</code> and <code>deploy</code> jobs to prevent artifact conflicts.</span>
+        <span class="mono text-red-400 text-[11px]">Workflow: deploy.yml</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: FUTURE SCOPE -->
+    <section class="slide flex-col justify-center w-full h-full max-w-5xl" data-title="Future Scope">
+      <div class="text-xs font-bold uppercase tracking-wider text-red-500 mb-2">08 / Scalability & Evolution</div>
+      <h2 class="text-4xl font-extrabold text-white tracking-tight mb-8">
+        Future Roadmap & Potential Enhancements
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="glass-card p-6 rounded-2xl">
+          <div class="w-10 h-10 rounded-xl bg-red-950 text-red-400 flex items-center justify-center font-bold text-lg mb-4">🎙️</div>
+          <h3 class="text-base font-bold text-white mb-2">Voice-to-Text Mock Interviews</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Integrate OpenAI Whisper / Web Speech API for real-time speech recognition, analyzing speech pace, filler words, and vocal confidence.
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl">
+          <div class="w-10 h-10 rounded-xl bg-rose-950 text-rose-400 flex items-center justify-center font-bold text-lg mb-4">🏫</div>
+          <h3 class="text-base font-bold text-white mb-2">College TPO Analytics Portal</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Admin dashboard for Training & Placement Officers to track batch-wide ATS scores, skill deficits, and candidate readiness distributions.
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl">
+          <div class="w-10 h-10 rounded-xl bg-red-950 text-red-300 flex items-center justify-center font-bold text-lg mb-4">💻</div>
+          <h3 class="text-base font-bold text-white mb-2">Live In-Browser Code Sandbox</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Integrated Monaco editor with WebAssembly execution engine to evaluate coding solutions against test cases during technical rounds.
+          </p>
+        </div>
+      </div>
+
+      <div class="glass-card p-4 rounded-xl text-xs text-slate-300 text-center">
+        PrepPilot is architected with modular microservice-readiness, allowing new AI models or external evaluators to plug in seamlessly.
+      </div>
+    </section>
+
+    <!-- SLIDE 10: CONCLUSION & VIVA Q&A -->
+    <section class="slide flex-col justify-center items-center text-center w-full h-full max-w-5xl" data-title="Conclusion & Viva Q&A">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/80 border border-red-700/50 text-red-400 text-xs font-bold uppercase tracking-wider mb-6">
+        09 / Project Conclusion
+      </div>
+
+      <h2 class="text-5xl font-black text-white tracking-tight mb-4">
+        Thank You! Ready for <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-rose-400 text-glow">Viva Q&A</span>
+      </h2>
+
+      <p class="text-base text-slate-300 max-w-2xl mb-8">
+        PrepPilot successfully bridges the gap between college preparation and real-world recruitment standards through accessible, state-of-the-art AI evaluation.
+      </p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full max-w-3xl mb-8 text-left text-xs">
+        <div class="glass-card p-4 rounded-xl">
+          <div class="text-[10px] text-red-400 font-bold uppercase">Live Application</div>
+          <a href="https://aryan1238.github.io/A/" target="_blank" class="text-sm font-bold text-white hover:underline">aryan1238.github.io/A/ ↗</a>
+        </div>
+        <div class="glass-card p-4 rounded-xl">
+          <div class="text-[10px] text-red-400 font-bold uppercase">Backend API</div>
+          <a href="https://preppilot-api-dk3o.onrender.com" target="_blank" class="text-sm font-bold text-white hover:underline">Render Web Service ↗</a>
+        </div>
+        <div class="glass-card p-4 rounded-xl">
+          <div class="text-[10px] text-red-400 font-bold uppercase">GitHub Repo</div>
+          <a href="https://github.com/Aryan1238/A" target="_blank" class="text-sm font-bold text-white hover:underline">Aryan1238/A ↗</a>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-black/60 border border-red-950/80 max-w-2xl text-xs text-slate-400">
+        <strong class="text-white block mb-1">Key Anticipated Viva Questions:</strong>
+        "Why Google Gemini over OpenAI?", "How is PDF parsed in memory?", "How is JWT secured?", "Why separate build & deploy jobs in GitHub Actions?"
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM BAR / NAVIGATION -->
+  <footer class="no-print h-14 border-t border-red-950/60 bg-black/40 backdrop-blur-md px-6 flex items-center justify-between z-50">
+    <div class="text-xs text-slate-400">
+      Use <kbd class="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 font-mono text-white text-[10px]">←</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 font-mono text-white text-[10px]">→</kbd> or <kbd class="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 font-mono text-white text-[10px]">Space</kbd> to navigate
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <button onclick="prevSlide()" class="px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white border border-slate-700 text-xs font-bold transition-all">
+        ← Previous
+      </button>
+      <button onclick="nextSlide()" class="px-4 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-md shadow-red-600/30 transition-all">
+        Next →
+      </button>
+    </div>
+  </footer>
+
+  <!-- SPEAKER NOTES POPUP MODAL (Toggle with 'N') -->
+  <div id="notesModal" class="no-print fixed inset-y-0 right-0 w-96 bg-black/95 border-l border-red-900/60 p-6 shadow-2xl backdrop-blur-xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between">
+    <div>
+      <div class="flex items-center justify-between pb-4 border-b border-red-950 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-red-500"></span>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Speaker Notes (Viva Script)</h3>
+        </div>
+        <button onclick="toggleNotes()" class="text-slate-400 hover:text-white text-sm font-bold">✕</button>
+      </div>
+
+      <div id="notesContent" class="text-xs text-slate-300 leading-relaxed space-y-3 overflow-y-auto max-h-[75vh] pr-2">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+
+    <div class="pt-4 border-t border-red-950 text-[10px] text-slate-500">
+      Tip: Keep explanation strictly under 1 minute per slide for a 10-minute presentation.
+    </div>
+  </div>
+
+  <script>
+    // Slide Data & Speaker Scripts
+    const slidesData = [
+      {
+        title: "Title & Overview",
+        notes: `<strong>Minute 00:00 - 01:00</strong><br><br>
+        • Good morning respected faculty and examiners. My name is Aryan Mishra.<br>
+        • Today I am presenting my project <strong>PrepPilot</strong>: an AI-Powered Resume ATS Analyzer and Interactive Mock Interview Coach.<br>
+        • Built using the full MERN stack with Google Gemini 1.5 Flash.<br>
+        • Both frontend and backend are fully deployed live on GitHub Pages and Render.`
+      },
+      {
+        title: "Problem Statement",
+        notes: `<strong>Minute 01:00 - 02:00</strong><br><br>
+        • 75% of student resumes are filtered out by ATS before a recruiter ever reads them.<br>
+        • Students lack realistic technical interview viva practice and get nervous in placements.<br>
+        • Commercial platforms like LeetCode Premium charge $35-$150/month, which college students cannot afford.<br>
+        • PrepPilot solves this gap completely free of charge.`
+      },
+      {
+        title: "Proposed Solution",
+        notes: `<strong>Minute 02:00 - 03:00</strong><br><br>
+        • PrepPilot features a dual-core AI system:<br>
+        1. <strong>ATS Resume Auditor:</strong> Parses candidate PDF in memory, calculates 0-100 ATS score, detects matched & missing keywords, gives 5 concrete suggestions.<br>
+        2. <strong>AI Mock Interview Coach:</strong> 5-question sequential technical rounds with instant /10 scoring, constructive critique, and model answers.`
+      },
+      {
+        title: "System Architecture",
+        notes: `<strong>Minute 03:00 - 04:30</strong><br><br>
+        • Engineered strictly on the MVC pattern.<br>
+        • React 18 SPA hosted on GitHub Pages with HashRouter.<br>
+        • Express.js REST API on Render cloud with rate limiting and CORS.<br>
+        • MongoDB Atlas replica set with Mongoose ODM.<br>
+        • Stateless JWT authentication with bcryptjs password hashing (10 salt rounds).`
+      },
+      {
+        title: "Resume Analyzer Feature",
+        notes: `<strong>Minute 04:30 - 06:00</strong><br><br>
+        • In-memory upload via Multer buffer (zero disk storage footprint).<br>
+        • pdf-parse extracts raw text and strips non-printable characters.<br>
+        • Gemini prompt enforces strict RFC8259 JSON response.<br>
+        • Generates ATS match score, keyword gap analysis, section critiques, and 1-click PDF download using html2pdf.js.`
+      },
+      {
+        title: "Mock Interview Feature",
+        notes: `<strong>Minute 06:00 - 07:30</strong><br><br>
+        • Candidates select role (Frontend, Backend, Full Stack, Data Science) and difficulty.<br>
+        • Gemini serves 5 sequential questions tailored to that stack.<br>
+        • Each answer is evaluated individually with numerical score, strengths, weaknesses, and ideal model answer.<br>
+        • Saves sessions to MongoDB for dashboard progress tracking.`
+      },
+      {
+        title: "Database & Security",
+        notes: `<strong>Minute 07:30 - 08:30</strong><br><br>
+        • MongoDB Schemas: User, Analysis, and Interview collections.<br>
+        • Password security: bcrypt pre-save hook with 10 salt rounds.<br>
+        • JWT authentication middleware guards all private routes.<br>
+        • Express-rate-limit prevents brute-forcing and Gemini API quota exhaustion.`
+      },
+      {
+        title: "Deployment & Testing",
+        notes: `<strong>Minute 08:30 - 09:30</strong><br><br>
+        • 11/11 automated Jest + Supertest test suites pass.<br>
+        • Deployed architecture: GitHub Pages for client, Render for Express backend, MongoDB Atlas for database.<br>
+        • CI/CD pipeline uses GitHub Actions with separated build and deploy jobs to prevent duplicate artifact collisions.`
+      },
+      {
+        title: "Future Scope",
+        notes: `<strong>Minute 09:30 - 10:00</strong><br><br>
+        • Real-time speech-to-text audio interview rounds using Web Speech API/Whisper.<br>
+        • College TPO portal for placement officers to track batch statistics.<br>
+        • In-browser Monaco code execution sandbox for live DSA coding rounds.`
+      },
+      {
+        title: "Conclusion & Viva Q&A",
+        notes: `<strong>Conclusion & Viva Questions</strong><br><br>
+        • Conclude by showcasing the live website.<br>
+        • Invite questions from the examiners.<br>
+        • Mention that full source code, Postman docs, and 5 UML diagrams are available in the repository.`
+      }
+    ];
+
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    const progressBar = document.getElementById('progressBar');
+    const slideIndicator = document.getElementById('slideIndicator');
+    const notesModal = document.getElementById('notesModal');
+    const notesContent = document.getElementById('notesContent');
+
+    function updateSlide() {
+      slides.forEach((slide, idx) => {
+        slide.classList.toggle('active', idx === currentSlide);
+      });
+
+      const currentNum = String(currentSlide + 1).padStart(2, '0');
+      const totalNum = String(totalSlides).padStart(2, '0');
+      slideIndicator.textContent = `${currentNum} / ${totalNum} — ${slidesData[currentSlide].title}`;
+      progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+      notesContent.innerHTML = slidesData[currentSlide].notes;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function toggleNotes() {
+      notesModal.classList.toggle('translate-x-full');
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        toggleFullScreen();
+      } else if (e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        toggleNotes();
+      }
+    });
+
+    // 10-Minute Presentation Timer Logic
+    let timeRemaining = 600; // 10 minutes in seconds
+    let timerRunning = false;
+    let timerInterval = null;
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timerToggleBtn = document.getElementById('timerToggle');
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(timeRemaining / 60);
+      const secs = timeRemaining % 60;
+      timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      if (timeRemaining <= 60) {
+        timerDisplay.classList.add('text-red-500', 'animate-pulse');
+      } else {
+        timerDisplay.classList.remove('text-red-500', 'animate-pulse');
+      }
+    }
+
+    function toggleTimer() {
+      if (timerRunning) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        timerToggleBtn.textContent = '▶';
+      } else {
+        timerInterval = setInterval(() => {
+          if (timeRemaining > 0) {
+            timeRemaining--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timerToggleBtn.textContent = '▶';
+          }
+        }, 1000);
+        timerRunning = true;
+        timerToggleBtn.textContent = '⏸';
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      timeRemaining = 600;
+      timerToggleBtn.textContent = '▶';
+      updateTimerDisplay();
+    }
+
+    // Initialize
+    updateSlide();
+  </script>
+</body>
+</html>
