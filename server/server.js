@@ -1,7 +1,7 @@
 /**
  * PrepPilot - Server Entry Point
  * Initializes MongoDB connection and starts the HTTP server.
- * Includes intelligent in-memory Mongo fallback for evaluation environments.
+ * Includes intelligent background reconnection retry loop.
  */
 
 const app = require('./src/app');
@@ -19,18 +19,22 @@ async function startServer() {
     console.error('Initial MongoDB connection attempt failed:', err.message);
   }
 
-  // Fallback to mongodb-memory-server if standard connection failed (great for viva demos)
+  // Background reconnect loop if initial connection was refused during DNS/IP propagation
   if (!dbConnection && mongoose.connection.readyState !== 1) {
-    try {
-      console.log('🔄 [MongoDB Fallback]: Launching in-memory MongoDB server for testing/viva demonstration...');
-      const { MongoMemoryServer } = require('mongodb-memory-server');
-      const mongod = await MongoMemoryServer.create();
-      const inMemoryUri = mongod.getUri();
-      await mongoose.connect(inMemoryUri);
-      console.log(`✅ [MongoDB In-Memory Connected]: ${inMemoryUri}`);
-    } catch (memErr) {
-      console.warn(`⚠️ Could not launch in-memory MongoDB: ${memErr.message}`);
-    }
+    const retryInterval = setInterval(async () => {
+      if (mongoose.connection.readyState === 1) {
+        clearInterval(retryInterval);
+        return;
+      }
+      try {
+        console.log('🔄 [MongoDB Reconnect]: Retrying connection to Atlas cluster...');
+        await connectDB();
+        console.log('✅ [MongoDB Reconnect]: Successfully connected to Atlas!');
+        clearInterval(retryInterval);
+      } catch (retryErr) {
+        console.warn('⚠️ [MongoDB Reconnect]: Still waiting for database access...', retryErr.message);
+      }
+    }, 5000);
   }
 
   const server = app.listen(PORT, () => {

@@ -8,6 +8,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 require('dotenv').config();
+const mongoose = require('mongoose');
 
 const { generalLimiter } = require('./middleware/rateLimiter.middleware');
 const { errorHandler, notFoundHandler } = require('./middleware/error.middleware');
@@ -104,6 +105,7 @@ app.get('/', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'healthy',
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'connecting',
     timestamp: new Date().toISOString(),
     uptime: `${Math.round(process.uptime())}s`,
     environment: process.env.NODE_ENV || 'development'
