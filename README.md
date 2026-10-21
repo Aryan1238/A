@@ -6,19 +6,23 @@
 [![Backend API](https://img.shields.io/badge/Backend%20API-Render-46e3b7?style=for-the-badge&logo=render)](https://preppilot-api-dk3o.onrender.com)
 [![Database](https://img.shields.io/badge/Database-MongoDB%20Atlas-47A248?style=for-the-badge&logo=mongodb)](https://cloud.mongodb.com/)
 [![AI Engine](https://img.shields.io/badge/AI%20Engine-Gemini%201.5%20Flash-4285F4?style=for-the-badge&logo=google)](https://aistudio.google.com/)
-[![Presentation Slides](https://img.shields.io/badge/Viva%20Slides-Red%2FBlack%20Theme-ef4444?style=for-the-badge&logo=slideshare)](docs/slides.html)
+[![Download PPTX](https://img.shields.io/badge/Download%20Slides-PPTX%20Format-D24726?style=for-the-badge&logo=microsoftpowerpoint)](docs/PrepPilot_Presentation.pptx)
+[![Download PDF](https://img.shields.io/badge/Download%20Slides-PDF%20Format-EC1C24?style=for-the-badge&logo=adobeacrobatreader)](docs/PrepPilot_Presentation.pdf)
 
 ---
 
-## 🌐 Live Deployments
+## 🌐 Live Deployments & Presentation Downloads
 
-| Component | Platform | Live URL | Status |
+| Component | Platform / Format | Link | Status |
 | :--- | :--- | :--- | :--- |
 | **Frontend Web App** | GitHub Pages | [https://aryan1238.github.io/A/](https://aryan1238.github.io/A/) | ✅ Active |
-| **Backend REST API** | Render | [https://preppilot-api-dk3o.onrender.com](https://preppilot-api-dk3o.onrender.com) | ✅ Active |
-| **API Health Check** | Render | [https://preppilot-api-dk3o.onrender.com/api/health](https://preppilot-api-dk3o.onrender.com/api/health) | 🩺 Healthy |
-| **Source Code** | GitHub | [https://github.com/Aryan1238/A](https://github.com/Aryan1238/A) | 📦 Public |
-| **Presentation Deck** | Local / Browser | [`docs/slides.html`](docs/slides.html) | 🎬 10-Min Deck |
+| **Backend REST API** | Render Cloud | [https://preppilot-api-dk3o.onrender.com](https://preppilot-api-dk3o.onrender.com) | ✅ Active |
+| **API Health Check** | Render Cloud | [https://preppilot-api-dk3o.onrender.com/api/health](https://preppilot-api-dk3o.onrender.com/api/health) | 🩺 Healthy |
+| **PowerPoint Deck (.pptx)** | Microsoft PowerPoint (16:9) | [`docs/PrepPilot_Presentation.pptx`](docs/PrepPilot_Presentation.pptx) | 📊 Download PPTX |
+| **PDF Slides Deck (.pdf)** | Vector PDF (10 Pages) | [`docs/PrepPilot_Presentation.pdf`](docs/PrepPilot_Presentation.pdf) | 📑 Download PDF |
+| **Interactive Web Deck** | Browser / HTML | [https://aryan1238.github.io/A/slides.html](https://aryan1238.github.io/A/slides.html) | 🎬 Live Browser Deck |
+| **Viva Defense Script** | Markdown Guide | [`docs/presentation_guide.md`](docs/presentation_guide.md) | 🎓 10-Min Script & Q&A |
+| **Source Repository** | GitHub | [https://github.com/Aryan1238/A](https://github.com/Aryan1238/A) | 📦 Public |
 
 ---
 
