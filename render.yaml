@@ -1,0 +1,28 @@
+# Render Blueprint configuration for PrepPilot Express Backend
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: preppilot-api
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CLIENT_URL
+        value: https://aryan1238.github.io
+      - key: MONGODB_URI
+        sync: false # Set in Render Dashboard: your MongoDB Atlas connection string
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: GEMINI_API_KEY
+        sync: false # Set in Render Dashboard: your Gemini API key from https://aistudio.google.com/
+      - key: GEMINI_MODEL
+        value: gemini-1.5-flash

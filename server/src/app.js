@@ -28,7 +28,8 @@ app.set('trust proxy', 1);
 const getAllowedOrigins = () => {
   const origins = new Set([
     'http://localhost:5173',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://aryan1238.github.io'
   ]);
 
   if (process.env.CLIENT_URL) {
@@ -90,7 +91,16 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // 4. Global Rate Limiter
 app.use('/api', generalLimiter);
 
-// 5. API Health Check Endpoint
+// 5. Root & Health Check Endpoints
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    message: '🚀 PrepPilot API Server is running.',
+    health: '/api/health',
+    frontend: 'https://aryan1238.github.io/A/'
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'healthy',

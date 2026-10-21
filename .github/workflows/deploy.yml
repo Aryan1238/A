@@ -40,6 +40,11 @@ jobs:
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
         run: |
+          if [ -z "$VITE_API_URL" ]; then
+            echo "::warning title=VITE_API_URL not configured::VITE_API_URL repository variable is empty. The static frontend will fall back to /api (causing HTTP 405 on POST). Configure VITE_API_URL in Settings > Secrets and variables > Actions > Variables with your Render backend URL."
+          else
+            echo "VITE_API_URL is configured."
+          fi
           npm run build
           cp dist/index.html dist/404.html
 
